@@ -10,6 +10,8 @@ const frames = [
   '/moldura/moldura4.png',
 ];
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+
 export default function Capture() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -116,7 +118,7 @@ export default function Capture() {
     formData.append('file', blob, 'framed-image.png');
 
     try {
-      const res = await fetch('http://localhost:3001/upload', {
+      const res = await fetch(`${API_URL}/upload`, {
         method: 'POST',
         body: formData,
       });
