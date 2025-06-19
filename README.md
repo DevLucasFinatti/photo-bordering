@@ -85,7 +85,3 @@ Você pode testar o projeto localmente carregando uma imagem, selecionando uma m
 ⚠️ **Não exponha tokens sensíveis no repositório.** Use sempre arquivos `.env.local` para variáveis de ambiente.
 
 ---
-
-## 📄 Licença
-
-Este projeto está sob a licença MIT.
