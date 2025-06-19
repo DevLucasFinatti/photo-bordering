@@ -52,3 +52,35 @@
 .hidden-input {
     display: none;
 }
+
+.approval-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1rem;
+
+    .approve-button,
+    .reject-button {
+        padding: 0.8rem 1.5rem;
+        border: none;
+        font-weight: bold;
+        cursor: pointer;
+        border-radius: 8px;
+        transition: 0.3s ease;
+    }
+
+    .approve-button {
+        background-color: #4caf50;
+        color: white;
+    }
+
+    .reject-button {
+        background-color: #f44336;
+        color: white;
+    }
+
+    .approve-button:hover,
+    .reject-button:hover {
+        opacity: 0.85;
+    }
+}

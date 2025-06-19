@@ -15,11 +15,19 @@ export default function Capture() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [image, setImage] = useState<string | null>(null);
   const [selectedFrame, setSelectedFrame] = useState<string | null>(null);
+  const [approved, setApproved] = useState(false);
   const [showQRCode, setShowQRCode] = useState(false);
   const [imageURL, setImageURL] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false);
 
   const canvasWidth = 900;
   const canvasHeight = 1600;
+
+  // Marca que já montou no cliente para evitar hydration mismatch
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
 
   const handleImageLoad = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -27,6 +35,8 @@ export default function Capture() {
       const reader = new FileReader();
       reader.onload = (event) => {
         setImage(event.target?.result as string);
+        setApproved(false);
+        setShowQRCode(false);
       };
       reader.readAsDataURL(file);
     }
@@ -48,10 +58,7 @@ export default function Capture() {
       const imgRatio = img.width / img.height;
       const canvasRatio = canvasWidth / canvasHeight;
 
-      let sx = 0,
-        sy = 0,
-        sWidth = img.width,
-        sHeight = img.height;
+      let sx = 0, sy = 0, sWidth = img.width, sHeight = img.height;
 
       if (imgRatio > canvasRatio) {
         sWidth = img.height * canvasRatio;
@@ -76,15 +83,73 @@ export default function Capture() {
   };
 
   useEffect(() => {
+    if (!hasMounted) return;
     drawCanvas();
-  }, [image, selectedFrame]);
+  }, [image, selectedFrame, hasMounted]);
 
-  const downloadImage = () => {
+  function dataURLtoBlob(dataurl: string) {
+    const arr = dataurl.split(',');
+    const mimeMatch = arr[0].match(/:(.*?);/);
+    if (!mimeMatch) return null;
+    const mime = mimeMatch[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) u8arr[n] = bstr.charCodeAt(n);
+    return new Blob([u8arr], { type: mime });
+  }
+
+  const uploadCanvasImage = async () => {
     if (!canvasRef.current) return;
+
+    setIsUploading(true);
+
     const dataUrl = canvasRef.current.toDataURL('image/png');
-    setImageURL(dataUrl);
-    setShowQRCode(true);
+    const blob = dataURLtoBlob(dataUrl);
+    if (!blob) {
+      alert('Erro ao converter imagem.');
+      setIsUploading(false);
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', blob, 'framed-image.png');
+
+    try {
+      const res = await fetch('http://localhost:3001/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!res.ok) throw new Error('Erro no upload');
+
+      const json = await res.json();
+
+      if (json.url) {
+        setImageURL(json.url);
+        setShowQRCode(true);
+      } else {
+        alert('Resposta inválida do servidor');
+      }
+    } catch (error) {
+      alert('Erro no upload: ' + error);
+    } finally {
+      setIsUploading(false);
+    }
   };
+
+  const reset = () => {
+    setImage(null);
+    setSelectedFrame(null);
+    setApproved(false);
+    setShowQRCode(false);
+    setImageURL(null);
+    setIsUploading(false);
+  };
+
+  if (!hasMounted) {
+    return null;
+  }
 
   return (
     <div className="capture-container">
@@ -119,9 +184,20 @@ export default function Capture() {
             ))}
           </div>
 
-          <button className="download-button" onClick={downloadImage}>
-            Download Framed Image
-          </button>
+          {!approved ? (
+            <div className="approval-buttons">
+              <button className="approve-button" onClick={() => setApproved(true)}>
+                Aprovar imagem
+              </button>
+              <button className="reject-button" onClick={() => setImage(null)}>
+                Rejeitar imagem
+              </button>
+            </div>
+          ) : (
+            <button className="download-button" onClick={uploadCanvasImage} disabled={isUploading}>
+              {isUploading ? 'Enviando...' : 'Upload & Gerar QR Code'}
+            </button>
+          )}
         </>
       )}
 
@@ -129,6 +205,16 @@ export default function Capture() {
         <div className="qrcode-section">
           <h2>Scan the QR code to download your image</h2>
           <QRCodeCanvas value={imageURL} size={256} />
+          <p>
+            Ou acesse diretamente:{' '}
+            <a href={imageURL} target="_blank" rel="noopener noreferrer">
+              Imagem Editada
+            </a>
+          </p>
+
+          <button onClick={reset} style={{ marginTop: '1rem' }}>
+            Voltar ao Início
+          </button>
         </div>
       )}
     </div>
