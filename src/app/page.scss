@@ -1,0 +1,60 @@
+body {
+    margin: 0;
+    margin-top: 20vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background-image: url('../../public/textura-de-tecido-branco-para-o-fundo.jpg');
+    background-repeat: repeat;
+    background-size: auto;
+    background-size: 100px 100px;
+    background-color: rgba(0, 0, 0, 0.5);
+    max-width: 100vw;
+    overflow-x: hidden;
+
+    &::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: -1;
+    }
+}
+
+.start-btn {
+    margin-top: 30vh;
+    padding: 12px 24px;
+    font-size: 1rem;
+    background-color: #fef5ff;
+    color: #333;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    box-shadow: 4px 4px 0px #aaa;
+    transition: transform 0.2s ease;
+
+    &::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        height: 2px;
+        width: 0%;
+        background-color: #333;
+        transition: width 0.8s ease;
+    }
+
+    &:hover {
+        &::after {
+            width: 100%;
+        }
+    }
+
+    &:active {
+        transform: translateY(2px) translateX(2px);
+        box-shadow: 2px 2px 0px #888;
+    }
+}
