@@ -26,10 +26,19 @@ export default function Capture() {
   const canvasWidth = 900;
   const canvasHeight = 1600;
 
-  // Marca que já montou no cliente para evitar hydration mismatch
   useEffect(() => {
     setHasMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (showQRCode) {
+      const timer = setTimeout(() => {
+        reset();
+      }, 10000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [showQRCode]);
 
   const handleImageLoad = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -164,7 +173,7 @@ export default function Capture() {
             onChange={handleImageLoad}
             className="hidden-input"
           />
-          <button onClick={() => inputRef.current?.click()}>Load Photo</button>
+          <button className='btn' onClick={() => inputRef.current?.click()}>Load Photo</button>
         </div>
       )}
 
@@ -189,14 +198,14 @@ export default function Capture() {
           {!approved ? (
             <div className="approval-buttons">
               <button className="approve-button" onClick={() => setApproved(true)}>
-                Aprovar imagem
+                😊👍 Aprovar imagem 
               </button>
               <button className="reject-button" onClick={() => setImage(null)}>
-                Rejeitar imagem
+                😠👎 Rejeitar imagem 
               </button>
             </div>
           ) : (
-            <button className="download-button" onClick={uploadCanvasImage} disabled={isUploading}>
+            <button className="download-button btn" onClick={uploadCanvasImage} disabled={isUploading}>
               {isUploading ? 'Enviando...' : 'Upload & Gerar QR Code'}
             </button>
           )}
@@ -214,7 +223,7 @@ export default function Capture() {
             </a>
           </p>
 
-          <button onClick={reset} style={{ marginTop: '1rem' }}>
+          <button className='btn' onClick={reset} style={{ marginTop: '1rem' }}>
             Voltar ao Início
           </button>
         </div>

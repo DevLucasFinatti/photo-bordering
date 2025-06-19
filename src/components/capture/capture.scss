@@ -19,7 +19,7 @@
         max-height: 60vh;
         border: 1px solid #ccc;
         display: block;
-        margin: 0 auto 1rem auto;
+        margin: 0 auto 0vh auto;
     }
 }
 
@@ -28,6 +28,11 @@
     gap: 1rem;
     justify-content: center;
     margin-bottom: 1rem;
+    background-color: #ffffff;
+    padding: 10px;
+    padding-left: 30px;
+    padding-right: 30px;
+    border-radius: 10px;
 }
 
 .frame {
@@ -38,7 +43,7 @@
 }
 
 .frame.selected {
-    border: 2px solid blue;
+    border: 2px solid #3aa14f;
 }
 
 .download-button {
@@ -57,7 +62,8 @@
     display: flex;
     gap: 1rem;
     justify-content: center;
-    margin-top: 1rem;
+    margin-top: 2vh;
+    margin-bottom: 50px;
 
     .approve-button,
     .reject-button {
@@ -70,17 +76,73 @@
     }
 
     .approve-button {
-        background-color: #4caf50;
-        color: white;
+        border: 1.5px solid #333;
+        /* borda escura */
+        padding: 10px 20px;
+        border-radius: 10px;
+        background-color: #ddd;
+        /* cinza claro */
+        color: #222;
+        /* texto escuro */
+        font-weight: 600;
+        transition: background-color 0.5s ease, color 0.5s ease;
+        cursor: pointer;
+        user-select: none;
+        margin-bottom: 50px;
+
+        &:hover {
+            background-color: #3aa14f;
+            color: #fff;
+            border-color: #2a7a3c;
+        }
     }
 
     .reject-button {
-        background-color: #f44336;
-        color: white;
+        border: 1.5px solid #333;
+        /* borda escura */
+        padding: 10px 20px;
+        border-radius: 10px;
+        background-color: #ddd;
+        /* cinza claro */
+        color: #222;
+        /* texto escuro */
+        font-weight: 600;
+        transition: background-color 0.5s ease, color 0.5s ease;
+        cursor: pointer;
+        user-select: none;
+        margin-bottom: 50px;
+
+        &:hover {
+            background-color: #f1574c;
+            color: #fff;
+            border-color: #f44336;
+        }
     }
 
     .approve-button:hover,
     .reject-button:hover {
         opacity: 0.85;
+    }
+}
+
+.btn {
+    border: 1.5px solid #333;
+    /* borda escura */
+    padding: 10px 20px;
+    border-radius: 10px;
+    background-color: #ddd;
+    /* cinza claro */
+    color: #222;
+    /* texto escuro */
+    font-weight: 600;
+    transition: background-color 0.5s ease, color 0.5s ease;
+    cursor: pointer;
+    user-select: none;
+    margin-bottom: 50px;
+
+    &:hover {
+        background-color: #3aa14f;
+        color: #fff;
+        border-color: #2a7a3c;
     }
 }
